@@ -40,5 +40,5 @@ jobs:
         run: terraform plan
       
       - name: Terraform Apply
-        working-directory: /Infra_Terraform_Code
+        working-directory: Infra_Terraform_Code
         run: terraform apply --auto-approve
