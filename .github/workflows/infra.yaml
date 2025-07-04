@@ -1,0 +1,44 @@
+name : Infra_Deployment
+
+on:
+  push:
+    branches: 
+    - main
+
+jobs:
+  deploy:
+    run-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      - name: Azure Cred
+        uses:uses: azure/login@v1
+        with:
+        creds: ${{ secrets.AZURE_CRED1 }} 
+
+      - name: Verify Auth for Azure
+        run: az account show
+
+      - name: Setup Terraform
+        terraform:
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Check Tools
+        run: |
+          terraform --version
+          echo "Terraform version is $(terraform --version | head -n 1)"
+      
+      - name: Terraform Init
+        working-directory: Infra_Terraform_Code
+        run: terraform init
+      
+      - name: Terraform Plan
+        working-directory: Infra_Terraform_Code
+        run: terraform Plan
+      
+      - name: Terraform Apply
+        working-directory: /Infra_Terraform_Code
+        run: terraform apply --auto-approve
