@@ -1,1 +1,4 @@
 variable "rg"{}
+variable "vnet" {
+  
+}
