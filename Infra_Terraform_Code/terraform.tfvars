@@ -1,6 +1,6 @@
 rg ={
     rg1={
-        name = "rg-git_action2"
+        name = "rg-git_action1"
         location = "centralindia"
     }
     rg2={
