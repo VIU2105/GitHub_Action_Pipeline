@@ -1,4 +1,1 @@
 variable "rg"{}
-variable "vnet" {
-  
-}
