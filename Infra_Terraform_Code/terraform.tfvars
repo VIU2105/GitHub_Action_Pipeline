@@ -1,13 +1,11 @@
 rg ={
-    rg1={
-        name = "rg-git_action2"
+    rg4={
+        name = "rg-git_action4"
+        location = "centralindia"
+    }
+    rg3={
+        name = "rg-git_action5"
         location = "centralindia"
     }
 }
 
-vnet ={
-    vnet={
-        vnet_name= "vnet_git_ac"
-        ad = ["10.0.0.0/16"]
-    }
-}
