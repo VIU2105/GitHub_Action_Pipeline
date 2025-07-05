@@ -4,3 +4,10 @@ rg ={
         location = "centralindia"
     }
 }
+
+vnet ={
+    vnet={
+        vnet_name= "vnet_git_ac"
+        ad = ["10.0.0.0/16"]
+    }
+}
