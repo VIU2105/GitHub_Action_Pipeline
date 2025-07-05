@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "Git_RG" {
 resource "azurerm_virtual_network" "Git_Vnet" {
     for_each = var.vnet
     name = each.value.vnet_name
-    resource_group_name = azurerm_resource_group.Git_RG[each.key].name
-    location = azurerm_resource_group.Git_RG[each.key].location
+    resource_group_name = azurerm_resource_group.Git_RG[each.value.rg_key].name
+    location = azurerm_resource_group.Git_RG[each.value.rg_key].location
     address_space = each.value.ad
 }

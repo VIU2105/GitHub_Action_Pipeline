@@ -13,5 +13,6 @@ vnet ={
     vnet1={
         vnet_name = "git_vnet"
         ad = ["10.0.0.0/16"]
+        rg_key      = "rg1"
     }
 }
