@@ -40,20 +40,33 @@ jobs:
         run: terraform fmt 
 
         #Terraform Linting (Predefined Actions)
-      - name: TFLint
-        uses: terraform-linters/tflint-action@v1.5.0 # we are using tflint GitHubAction it will install and run so no separate run define is required 
-        with:                                           #with: GitHub Action ke inputs dene ke liye
-          working_directory: Infra_Terraform_Code
+      # - name: TFLint
+      #   uses: terraform-linters/tflint-action@v1.3.0 # we are using tflint GitHubAction it will install and run so no separate run define is required 
+      #   with:                                           #with: GitHub Action ke inputs dene ke liye
+      #     working_directory: Infra_Terraform_Code
       
-          #Security Scanning
-      - name: Checkov Scan
+      - name: Setup TFLint (install)
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest       # or specify, e.g., v0.55.0
+          github_token: ${{ secrets.GITHUB_TOKEN }}  
+
+      # Run the Tflint tool
+      - name: TfLint Run
+        run: |
+          cd Infra_Terraform_Code
+          tflint init
+          tflint --format=compact
+
+        #Security Scanning 
+      - name: Checkov Scan 
         uses: bridgecrewio/checkov-action@v12
         with:
           directory: Infra_Terraform_Code    
       
-          #Terraform Security (tfsec)
+          #Terraform Security (tfsec) and comment PR
       - name: tfsec security check
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.4.0 #tfsec ke scan result PR ke neeche comment ke form mein dikhne lagenge
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.3.0 #tfsec ke scan result PR ke neeche comment ke form mein dikhne lagenge
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }} # github_token is an auto-generated temporary token that GitHub creates for your workflow to authenticate with the GitHub API.
           working_directory: Infra_Terraform_Code #if we don't provide this github_token keywords it will not comment anything
@@ -63,6 +76,6 @@ jobs:
         run: terraform plan
       
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'     # github.ref its built-in variable — it tell about on which Git ref (branch/tag) need to trigger
+        if: github.ref == 'refs/heads/main'     
         working-directory: Infra_Terraform_Code # 'refs/heads/main' Git ka full reference name hai for the main branch
-        run: terraform apply --auto-approve
+        run: terraform apply --auto-approve     # github.ref its built-in variable — it tell about on which Git ref (branch/tag) need to trigger
