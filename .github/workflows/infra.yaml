@@ -55,8 +55,8 @@ jobs:
       - name: TfLint Run
         run: |
           cd Infra_Terraform_Code
-          tflint init
-          tflint --format=compact
+          tflint --init --chdir=Infra_Terraform_Code  # Command line arguments support was dropped in v0.47.
+          tflint --chdir=Infra_Terraform_Code --format=compact # Use --chdir or --filter instead. 
 
         #Security Scanning 
       - name: Checkov Scan 
