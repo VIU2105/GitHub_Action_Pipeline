@@ -1,8 +1,8 @@
-variable "rg"{
-    type = string
+variable "rg" {
+    # type = string
 }
-variable "vnet"{
-    type = string
+variable "vnet" {
+    # type = string
 }
 
 #Terraform 0.11 and earlier required type constraints to be given in quotes,
