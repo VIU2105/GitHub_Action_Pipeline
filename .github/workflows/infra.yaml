@@ -54,7 +54,7 @@ jobs:
       # Run the Tflint tool
       - name: TfLint Run
         run: |
-          cd Infra_Terraform_Code
+          ls -la
           tflint --init --chdir=Infra_Terraform_Code  # Command line arguments support was dropped in v0.47.
           tflint --chdir=Infra_Terraform_Code --format=compact # Use --chdir or --filter instead. 
 
