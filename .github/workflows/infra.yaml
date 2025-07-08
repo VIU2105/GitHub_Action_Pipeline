@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout Code       #Tumhara repo ka content (code, tf files, scripts, etc.) runner machine pe clone karna
         uses: actions/checkout@v3
       
       - name: Azure Cred
@@ -18,12 +18,12 @@ jobs:
           creds: ${{ secrets.AZURE_CRED1 }} 
 
       - name: Verify Auth for Azure
-        run: az account show
-
+        run: az account show       #run :Execute command in shell (Linux/macOS: bash, Windows: PowerShell)
+      
       - name: Setup Terraform
         # terraform:
-        uses: hashicorp/setup-terraform@v3
-        with:
+        uses: hashicorp/setup-terraform@v3   #Ye official Terraform GitHub Action hai, jo HashiCorp ne banaya hai
+        with:                                 #uses: likha hai, wo ek predefined GitHub Action ko call karta hai
           terraform_version: 1.11.2
 
       - name: Check Tools
@@ -34,12 +34,48 @@ jobs:
       - name: Terraform Init
         working-directory: Infra_Terraform_Code
         run: terraform init
-      
-      - name: Terraform Plan
+
+      - name: Terraform fmt
         working-directory: Infra_Terraform_Code
+        run: terraform fmt 
+
+        #Terraform Linting (Predefined Actions)
+      # - name: TFLint
+      #   uses: terraform-linters/tflint-action@v1.3.0 # we are using tflint GitHubAction it will install and run so no separate run define is required 
+      #   with:                                           #with: GitHub Action ke inputs dene ke liye
+      #     working_directory: Infra_Terraform_Code
+      
+      - name: Setup TFLint (install)
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest       # or specify, e.g., v0.55.0
+          github_token: ${{ secrets.GITHUB_TOKEN }}  
+
+      # Run the Tflint tool pipeline is justing failed if we haven't use || true
+      - name: TfLint Run
+        run: |
+          ls -la
+          tflint --init --chdir=Infra_Terraform_Code  # Command line arguments support was dropped in v0.47.
+          tflint --chdir=Infra_Terraform_Code --format=compact || true # # Use --chdir or --filter instead. 
+
+        #Security Scanning 
+      - name: Checkov Scan 
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: Infra_Terraform_Code    
+      
+          #Terraform Security (tfsec) and comment PR
+      # - name: tfsec security check
+      #   uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1 #tfsec ke scan result PR ke neeche comment ke form mein dikhne lagenge
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }} # github_token is an auto-generated temporary token that GitHub creates for your workflow to authenticate with the GitHub API.
+      #     working_directory: Infra_Terraform_Code #if we don't provide this github_token keywords it will not comment anything
+                
+      - name: Terraform Plan
+        working-directory: Infra_Terraform_Code # in which floder command will run
         run: terraform plan
       
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        working-directory: Infra_Terraform_Code
-        run: terraform apply --auto-approve
+        if: github.ref == 'refs/heads/main'     
+        working-directory: Infra_Terraform_Code # 'refs/heads/main' Git ka full reference name hai for the main branch
+        run: terraform apply --auto-approve     # github.ref its built-in variable — it tell about on which Git ref (branch/tag) need to trigger
